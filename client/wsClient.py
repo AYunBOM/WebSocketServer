@@ -2,9 +2,9 @@ import socket
 # 접속하고 싶은 서버의 주소를 입력한다.
 # ip주소를 직접 입력할 수 도 있고 hostname도 입력 가능하다.
 # host = '127.0.0.1'
-host = "localhost"
+host = "101.101.208.213"
 # 접속하고 싶은 포트를 입력한다.
-port = 9123
+port = 8080
 
 
 #IPv4 체계, TCP 타입 소켓 객체를 생성

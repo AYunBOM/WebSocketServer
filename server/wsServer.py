@@ -1,7 +1,7 @@
 import socket
 
-host = "127.0.0.1"
-port = 9123
+host = "101.101.208.213"
+port = 8080
 
 #IPv4 체계, TCP 타입 소켓 객체를 생성
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

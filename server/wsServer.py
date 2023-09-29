@@ -1,32 +1,32 @@
 import socket
 
-host = "101.101.166.241"
-port = 8080
+# 서버 설정
+host = '0.0.0.0'  # 모든 IP 주소에서 연결 허용
+port = 8080     # 사용할 포트 번호
 
-#IPv4 체계, TCP 타입 소켓 객체를 생성
+# 소켓 생성
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#포트를 사용 중 일때 에러를 해결하기 위한 구문
-server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-#ip주소와 port번호를 함께 socket에 바인드 한다.
-#포트의 범위는 1-65535 사이의 숫자를 사용할 수 있다.
+# 소켓을 주소와 포트에 바인딩
 server_socket.bind((host, port))
 
-#서버가 클라이언트의 접속을 허용한다.
-server_socket.listen()
+# 클라이언트로부터 연결 대기
+server_socket.listen(1)  # 1개의 연결을 동시에 처리
 
-#클라이언트 함수가 접속하면 새로운 소켓을 반환한다.
-client_socket, addr = server_socket.accept()
+print(f"서버가 {host}:{port}에서 실행 중입니다.")
 
-print("접속한 클라이언트의 주소 입니다. : ", addr)
+# 클라이언트와 연결 수락
+client_socket, client_address = server_socket.accept()
+print(f"{client_address}에서 연결이 수락되었습니다.")
 
-while 1:
-    string = client_socket.recv(1024).decode()
-    if string == "": break
-    print("받은 데이터는 \"", string, "\" 입니다.", sep="")
+# 클라이언트로부터 데이터 받기
+data = client_socket.recv(1024)  # 최대 1024바이트 데이터를 받음
+print(f"클라이언트로부터 받은 데이터: {data.decode('utf-8')}")
 
-    client_socket.sendall(string.encode())
-# 소켓을 닫는다.
-print("접속을 종료합니다.")
+# 클라이언트로 "Hello World!" 메시지 보내기
+message = "Hello World!"
+client_socket.send(message.encode('utf-8'))
+
+# 연결 종료
 client_socket.close()
 server_socket.close()

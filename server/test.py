@@ -14,7 +14,6 @@ def random_question():
 
     question += " = ?"
 
-    print(question)
+    return question, answer
 
 
-random_question()

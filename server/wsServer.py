@@ -2,10 +2,13 @@
 
 import socket
 import random
+import time
 
 # 서버 설정
 host = '0.0.0.0'  # 모든 IP 주소에서 연결 허용
 port = 8080       # 사용할 포트 번호
+
+system_clock = 0
 
 def random_question():
     first_num = random.randint(0, 100)
@@ -15,6 +18,27 @@ def random_question():
     operator2 = random.choice(['+', '-', '*', '/'])
 
     question = "{} {} {} {} {}".format(first_num, operator1, second_num, operator2, third_num)
+
+    answer = int(eval(question))
+
+    question += " = ?"
+
+    return question, answer
+
+
+def client_handler():
+    global system_clock
+
+    while system_clock < 600:
+        question, answer = random_question()
+
+        client_socket.send(question.encode('utf-8'))
+
+        data = client_socket.recv(1024).decode('utf-8')
+        print("클라이언트로부터 받은 데이터: {}".format(data))
+        
+        time.sleep(1)
+        system_clock += 1
 
 
 
@@ -42,8 +66,7 @@ print("{}에서 연결이 수락되었습니다.".format(client_address))
 
 while True:
     # 클라이언트로부터 데이터 받기
-    data = client_socket.recv(1024).decode('utf-8')
-    print("클라이언트로부터 받은 데이터: {}".format(data))
+    
 
     # 서버에서 메시지 생성
     server_message = "server: " + data

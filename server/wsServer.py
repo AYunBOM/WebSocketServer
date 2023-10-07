@@ -40,15 +40,6 @@ def client_handler():
         time.sleep(1)
         system_clock += 1
 
-
-
-
-
-
-
-
-
-
 # 소켓 생성
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print("0")
@@ -66,7 +57,6 @@ print("{}에서 연결이 수락되었습니다.".format(client_address))
 
 while True:
     # 클라이언트로부터 데이터 받기
-    
 
     # 서버에서 메시지 생성
     server_message = "server: " + data

@@ -10,7 +10,6 @@ server_host = "101.101.208.213"  # 서버의 IP 주소로 변경
 server_port = 8080  # 서버에서 설정한 포트 번호로 변경
 delay_time = random.randint(1, 5)
 
-
 # 시간을 리얼타임으로 변환
 def real_time(time): 
     minute = "{}".format(time // 60)
@@ -21,6 +20,9 @@ def real_time(time):
 
 # 서버 접속 시간 리얼타임으로 변환
 system_clock = real_time(delay_time)
+
+# 제한시간 10분
+finish_time = real_time(600)
 
 # 서버 접속 대기 시간 출력, 대기시간 만큼 지연시킨다.
 print("서버 접속 대기 시간: {}".format(delay_time))
@@ -71,9 +73,12 @@ while True:
     # 문제에 대한 걸린 시간과 답 보내기
     answer = sys.stdin.readline()
     # 문제를 해결하는데 걸린 시간과 답(공백제거)
-    answer = '{}'.format(question_resolve_time) + answer.strip() 
+    answer = '{}'.format(question_resolve_time) + " " + answer.strip() 
     client_socket.send(answer.encode('utf-8'))
     client_file.write("{} > 서버에게 임의의 정답을 보냈습니다.".format(system_clock))
+
+# 서버 종료될 때 로그를 적는다.
+client_file.write("{} > 서버와의 접속을 종료하였습니다.".format(finish_time))
 
 # 연결 종료 (실제로는 이 부분이 실행되지 않을 것입니다)
 client_socket.close()

@@ -45,10 +45,15 @@ print("서버에게 대기시간을 보냈습니다.")
 while True:
     # 서버로부터 문제 받기 (사칙연산 문제와 클라이언트 번호 포함)
     question = client_socket.recv(1024).decode("utf-8")
-    print("서버에게 받은 문제: {}".format(question))
+
+    # , 를 기준으로 분해한다.
+    question_split = question.split(",")
+
+    question_q = question_split[0]
+
+    print("서버에게 받은 문제: {}".format(question_q))
 
     # 문제를 받았을 때, 클라이언트 로그에 문제를 받은 시간을 적는다.
-    question_split = question.split(",")
     question_recv_time = int(question_split[1])
     # 문제를 받은 시간을 로그 입력 형식에 맞게 변환시킨다.
     system_clock = real_time(question_recv_time)

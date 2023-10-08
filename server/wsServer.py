@@ -50,8 +50,7 @@ def client_handler(client_socket, thread_num):
     system_clock = real_time(time_ls[thread_num])
 
     while time_ls[thread_num] < 600:
-        question += ",{}".format(time_ls[thread_num]) # [3 + 4 + 5 = ?], [4] # [3 + 4 + 5 = ?], [4]
-         
+        question += ",{}".format(time_ls[thread_num]) # [3 + 4 + 5 = ?], [4]
         server_file.write("{} > 클라이언트 {}에게 문제를 출제합니다.".format(system_clock, thread_num))
 
         client_socket.send(question.encode("utf-8"))
@@ -75,7 +74,6 @@ def client_handler(client_socket, thread_num):
             system_clock = real_time(time_ls[thread_num]) # 전체 시간 업데이트
 
             result_sum += client_ans # 클라이언트가 푼 문제의 답 최종 합계
-            
             
             question, answer = random_question()
         
@@ -107,12 +105,14 @@ while True:
     )
     client_thread.start()
 
+    client_socket.send(str(thread_num).encode("utf-8"))
+
     delay_time = int(client_socket.recv(1024).decode("utf-8"))
     time_ls[thread_num] = delay_time
     system_clock = real_time(time_ls[thread_num])
         
     server_file.write("{} > '클라이언트 {}' 연결 완료.\n".format(system_clock, thread_num))
-
+    
     thread_num += 1
 
 server_file.write("최종 합계 : {}".format(result_sum))

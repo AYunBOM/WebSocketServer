@@ -61,10 +61,12 @@ def client_handler(client_socket, thread_num):
     
     
 
-    while time_ls[thread_num] < 600:
+    while True:
         question += ",{}".format(time_ls[thread_num]) # [3 + 4 + 5 = ?], [4]
+
         system_clock_formating = real_time(time_ls[thread_num])
         server_file.write("{} > 클라이언트 {}에게 문제를 출제합니다.".format(system_clock_formating, thread_num))
+
 
         client_socket.send(question.encode("utf-8"))
         data = client_socket.recv(1024).decode("utf-8")
@@ -89,18 +91,32 @@ def client_handler(client_socket, thread_num):
             system_clock_formating = real_time(time_ls[thread_num]) # 전체 시간 업데이트
 
             result_sum += client_ans # 클라이언트가 푼 문제의 답 최종 합계
+
             
-            question, answer = random_question()
+            server_file.write("{} > '클라이언트{}'가 답을 맞췄습니다. 정답:{}\n".format(system_clock_formating, thread_num, answer))
+            server_file.write("{} > {}초 뒤 '클라이언트{}'에게 새 문제를 출제합니다.\n".format(system_clock_formating, delay, thread_num))
+
+            if time_ls[thread_num]+delay >= 60 :
+                server_file.write("{} > 연결을 종료해 주세요.\n".format(system_clock_formating))
+                delay = 60-time_ls[thread_num]
+                client_socket.send(str(delay).encode("utf-8"))
+                time.sleep(delay)
+                break
+            else :
+                time_ls[thread_num] += delay # 시간 업데이트(대기 시간 추가)
+                time.sleep(delay) # 임의로 지정한 대기 시간
+                result_sum += client_ans # 클라이언트가 푼 문제의 답 최종 합계
+                question, answer = random_question()
         
         # 문제를 틀렸을 시, 같은 문제 재전송
         elif client_ans != answer :
             question = question.split(',')[0]
 
-            server_file.write("{} > '클라이언트{}'의 답이 틀렸습니다. 문제를 재전송합니다.".format(system_clock_formating, thread_num))
+            server_file.write("{} > '클라이언트{}'의 답이 틀렸습니다. 문제를 재전송합니다.\n".format(system_clock_formating, thread_num))
 
             continue   
-         
-    server_file.write("{} > '클라이언트{}'의 접속을 종료합니다.".format(system_clock_formating, thread_num))
+        
+    server_file.write("{} > '클라이언트{}'의 접속을 종료합니다.\n".format(system_clock_formating, thread_num))
 
 # 소켓 생성
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -110,7 +126,7 @@ server_socket.bind((host, port))
 
 # 클라이언트로부터 연결 대기
 server_socket.listen(4) # 4개의 연결을 동시에 처리
-server_file.write("서버가 {}:{}에서 실행 중입니다.".format(host, port))
+server_file.write("서버가 {}:{}에서 실행 중입니다.\n".format(host, port))
 
 # 클라이언트와 연결 수락
 while thread_num < 4:
@@ -124,7 +140,7 @@ while thread_num < 4:
 
     thread_num += 1
 
-server_file.write("최종 합계 : {}".format(result_sum))
+server_file.write("최종 합계 : {}\n".format(result_sum))
 
 server_file.close()
 client_socket.close()

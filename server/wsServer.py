@@ -43,8 +43,8 @@ def random_question():
     return question, answer
 
 # 클라이언트에게 문제 출제&정답체크
-def client_handler(client_socket, thread_num, system_clock):
-    global system_clock_formating, result_sum, time_ls
+def client_handler(client_socket, thread_num):
+    global system_clock_formating, result_sum, time_ls, system_clock
 
     
     message = "{} {}".format(thread_num, system_clock)
@@ -59,10 +59,11 @@ def client_handler(client_socket, thread_num, system_clock):
 
     question, answer = random_question()
     
-    system_clock_formating = real_time(time_ls[thread_num])
+    
 
     while time_ls[thread_num] < 600:
         question += ",{}".format(time_ls[thread_num]) # [3 + 4 + 5 = ?], [4]
+        system_clock_formating = real_time(time_ls[thread_num])
         server_file.write("{} > 클라이언트 {}에게 문제를 출제합니다.".format(system_clock_formating, thread_num))
 
         client_socket.send(question.encode("utf-8"))
@@ -70,6 +71,7 @@ def client_handler(client_socket, thread_num, system_clock):
         
         client_time, client_ans  = map(int, data.split())
         time_ls[thread_num] += client_time
+        system_clock = time_ls[thread_num]
          
         system_clock_formating = real_time(time_ls[thread_num])
         print(system_clock_formating)
@@ -83,6 +85,7 @@ def client_handler(client_socket, thread_num, system_clock):
 
             time.sleep(delay) # 임의로 지정한 대기 시간
             time_ls[thread_num] += delay # 시간 업데이트(대기 시간 추가)
+            system_clock = time_ls[thread_num]
             system_clock_formating = real_time(time_ls[thread_num]) # 전체 시간 업데이트
 
             result_sum += client_ans # 클라이언트가 푼 문제의 답 최종 합계
@@ -115,7 +118,7 @@ while thread_num < 4:
     system_clock += 1
     client_socket, client_address = server_socket.accept()
     client_thread = threading.Thread(
-        target=client_handler, args=(client_socket, thread_num, system_clock)
+        target=client_handler, args=(client_socket, thread_num)
     )
     client_thread.start()
 

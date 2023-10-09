@@ -17,7 +17,6 @@ def real_time(time):
     # 예) 3초 => 00:03 / 100초 => 01:40
     return result
 
-
 # 제한시간 10분
 finish_time = real_time(600)
 
@@ -38,6 +37,8 @@ system_clock_formating = real_time(system_clock)
 client_file.write("{} > 서버에 접속하였습니다.".format(system_clock_formating))
 
 while True:
+    elapsed_time = 0
+    answer = ''
     # 서버로부터 문제 받기 (사칙연산 문제와 클라이언트 번호 포함)
     question = client_socket.recv(1024).decode("utf-8")
 
@@ -57,6 +58,17 @@ while True:
     # 문제를 해결한 임의의 시간을 구한다.
     question_resolve_time = random.randint(1, 5)
     
+    while elapsed_time < question_resolve_time:
+        answer = input("{}초 남았습니다. 답을 입력하세요 : ".format(question_resolve_time-elapsed_time))
+        
+        # 1초마다 시간 경과
+        time.sleep(1)
+        elapsed_time += 1
+
+    # 시간 초과
+    if answer == "":
+        print("시간초과")
+
     # 문제를 푼 시간(로그에 입력할 용도)은 문제를 받은 시간에서 문제를 해결하는데 걸린 시간을 더해주면 된다.
     question_ans_time = question_recv_time + question_resolve_time
 
@@ -64,10 +76,9 @@ while True:
     system_clock = real_time(question_ans_time)
 
     # 문제에 대한 걸린 시간과 답 보내기
-    answer = sys.stdin.readline()
     # 문제를 해결하는데 걸린 시간과 답(공백제거)
-    answer = '{} '.format(question_resolve_time) + answer.strip() 
-    client_socket.send(answer.encode('utf-8'))
+    message = '{} {}'.format(question_resolve_time, answer)
+    client_socket.send(message.encode('utf-8'))
     client_file.write("{} > 서버에게 임의의 정답을 보냈습니다.".format(system_clock_formating))
 
 # 서버 종료될 때 로그를 적는다.

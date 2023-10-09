@@ -8,7 +8,7 @@ import random
 # 서버 정보 설정
 server_host = "101.101.208.213"  # 서버의 IP 주소로 변경
 server_port = 8080  # 서버에서 설정한 포트 번호로 변경
-delay_time = random.randint(1, 5)
+delay_time = random.randint(0, 5)
 
 # 시간을 리얼타임으로 변환
 def real_time(time): 

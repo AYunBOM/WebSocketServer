@@ -4,6 +4,8 @@ import socket
 import sys
 import time
 import random
+from threading import Timer
+
 
 # 서버 정보 설정
 server_host = "101.101.208.213"  # 서버의 IP 주소로 변경
@@ -38,6 +40,7 @@ client_file.write("{} > 서버에 접속하였습니다.\n".format(system_clock_
 while True:
     elapsed_time = 0
     answer = ''
+    timeout = 0
     # 서버로부터 문제 받기 (사칙연산 문제와 클라이언트 번호 포함)
     question = client_socket.recv(1024).decode("utf-8")
 
@@ -58,16 +61,17 @@ while True:
     # 문제를 해결한 임의의 시간을 구한다.
     question_resolve_time = random.randint(1, 5)    
     
-    while elapsed_time < question_resolve_time:
-        answer = input("{}초 남았습니다. 답을 입력하세요 : ".format(question_resolve_time-elapsed_time))
-        
-        # 1초마다 시간 경과
-        time.sleep(1)
-        elapsed_time += 1
+    # 임의의 시간동안 입력받기
+    t = Timer(question_resolve_time)
+    t.start()
 
-    # 시간 초과
-    if answer == "":
-        print("시간초과")
+    prompt = "You have {} seconds to choose the correct answer...\n".format(question_resolve_time)
+    answer = input(prompt)
+    t.cancel()
+
+    if answer == '':
+        timeout = 1
+
 
     # 문제를 푼 시간(로그에 입력할 용도)은 문제를 받은 시간에서 문제를 해결하는데 걸린 시간을 더해주면 된다.
     question_ans_time = question_recv_time + question_resolve_time
@@ -84,7 +88,7 @@ while True:
     # 문제에 대한 걸린 시간과 답 보내기
 
     # 문제를 해결하는데 걸린 시간과 답(공백제거)
-    message = '{} {}'.format(question_resolve_time, answer)
+    message = '{} {} {}'.format(question_resolve_time, answer, timeout)
     client_socket.send(message.encode('utf-8'))
     client_file.write("{} > 서버에게 임의의 정답을 보냈습니다.".format(system_clock_formating))
 

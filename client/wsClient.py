@@ -74,7 +74,7 @@ while True:
     # 문제를 해결한 시간이 600초 이상이라면 종료
     if question_ans_time >= 600:
         system_clock_formating = real_time(600)
-        answer = "{} 0".format(600 - question_recv_time)
+        answer = "{} 0".format(600)
         client_socket.send(answer.encode("utf-8"))
         break
 
@@ -91,3 +91,5 @@ while True:
 client_file.write(
     "{} > [client{}] 서버와의 접속을 종료하였습니다.".format(system_clock_formating, thread_num)
 )
+
+client_socket.close()

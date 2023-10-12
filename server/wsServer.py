@@ -27,7 +27,7 @@ server_socket.listen(4)  # 4개의 연결을 동시에 처리
 server_file.write("서버가 {}:{}에서 실행 중입니다.\n".format(host, port))
 
 
-# 시간을 리얼타임으로 변환
+# 시간을 출력 형식에 맞게 변환
 def real_time(time):
     minute = "{}".format(time // 60)
     second = "{}".format(time % 60)
@@ -36,7 +36,7 @@ def real_time(time):
     return result
 
 
-# 임의의 문제 출제&정답
+# 랜덤으로 문제 출제&정답
 def random_question():
     first_num = random.randint(1, 100)
     second_num = random.randint(1, 100)
@@ -55,7 +55,7 @@ def random_question():
     return question, answer
 
 
-# 클라이언트에게 문제 출제&정답체크
+# 클라이언트에게 문제 출제 & 정답 체크
 def client_handler(client_socket, thread_num):
     global system_clock, result_sum, count
 

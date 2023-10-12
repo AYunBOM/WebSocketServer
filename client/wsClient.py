@@ -12,7 +12,7 @@ system_clock = 0  # 서버 0~600초 누적시간
 system_clock_formating = ""  # 누적시간 형태 변환할 문자열
 
 
-# 시간을 리얼타임으로 변환
+# 시간을 출력 형식에 맞게 변환
 def real_time(time):
     minute = "{}".format(time // 60)
     second = "{}".format(time % 60)
@@ -38,7 +38,7 @@ client_file.write(
     "{} > [client{}] 서버에 접속하였습니다.\n".format(system_clock_formating, thread_num)
 )
 
-# 서버로부터 문제 받음&문제 풀기
+# 서버로부터 문제 받음 & 문제 풀기
 while True:
     # 서버로부터 문제 받기 (사칙연산 문제와 클라이언트 번호 포함)
     question = client_socket.recv(1024).decode("utf-8")
